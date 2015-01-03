@@ -21,7 +21,7 @@
               dep/depend vname# (:name %))
            (:deps opt-map#))
          (swap! aws-registry
-           assoc-in [vname#] opt-map#)
+           assoc vname# opt-map#)
          rvar#))))
 
 (defmacro defawsmacro [norig]
