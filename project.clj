@@ -5,4 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[amazonica "0.3.6"]
                  [com.stuartsierra/dependency "0.1.1"]
-                 [org.clojure/clojure "1.6.0"]])
+                 [org.clojure/clojure "1.6.0"]
+                 [prismatic/schema "0.3.3"]])
