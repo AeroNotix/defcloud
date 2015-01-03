@@ -28,10 +28,10 @@
            assoc vname# opt-map#)
          rvar#))))
 
-(defmacro defawsmacro [norig]
-  (let [n (symbol (str "def" (name norig)))]
+(defmacro defawsmacro [name-original]
+  (let [n (symbol (str "def" (name name-original)))]
     `(defmacro ~n [name# & opts#]
-       (defthing ~norig name# opts#))))
+       (defthing ~name-original name# opts#))))
 
 (defawsmacro :elb)
 (defawsmacro :asg)
