@@ -55,6 +55,7 @@
         false))))
 
 (defn update-elb-settings [elb existing]
+  ;; TODO
   [elb existing])
 
 (defn create-load-balancer [elb]
