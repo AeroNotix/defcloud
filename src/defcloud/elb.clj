@@ -7,6 +7,7 @@
 
 
 (def ^:dynamic *default-availability-zones* ["us-east-1a"])
+(def default-idle-timeout 3600)
 
 (def listener-schema
   {:protocol (s/enum "tcp" "udp" "http")
@@ -35,10 +36,14 @@
 
 (defn schema->amazonica
   "Converts from the API schema to the Amazonica names."
-  [{:keys [name availability-zones]
-    :or {availability-zones *default-availability-zones*} :as all}]
+  [{:keys [name availability-zones idle-timeout]
+    :or {availability-zones *default-availability-zones*
+         idle-timeout default-idle-timeout} :as all}]
   (merge all
     {:availability-zones availability-zones
+     :load-balancer-attributes
+     {:connection-settings
+      {:idle-timeout idle-timeout}}
      :load-balancer-name name}))
 
 (defn exists? [elb]
@@ -52,6 +57,18 @@
 (defn update-elb-settings [elb existing]
   [elb existing])
 
+(defn create-load-balancer [elb]
+  (elb/create-load-balancer elb)
+  (when (and (:idle-timeout elb)
+          (not= (:idle-timeout elb)
+            default-idle-timeout))
+    (loop [existing? (exists? elb)]
+      (if-not existing?
+        (do
+          (Thread/sleep 3000)
+          (recur (exists? elb)))
+        (update-elb-settings elb existing?)))))
+
 (defmethod defcloud/create-in-aws! :elb
   [elb]
   (let [elb (->> elb
@@ -60,4 +77,4 @@
         existing? (exists? elb)]
     (if existing?
       (update-elb-settings elb existing?)
-      (elb/create-load-balancer elb))))
+      (create-load-balancer elb))))
