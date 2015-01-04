@@ -10,6 +10,12 @@
 (defmulti validate :kind)
 (defmulti create-in-aws! :kind)
 
+(defn create-all-in-aws! []
+  (let [order (filter #(not= % :base)
+                (dep/topo-sort @aws-dependencies))]
+    (map #(create-in-aws! (@aws-registry %))
+      order)))
+
 (defn defthing [thing name opts]
   (let [options (apply hash-map opts)]
     `(do
