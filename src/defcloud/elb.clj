@@ -23,9 +23,15 @@
    (s/optional-key :idle-timeout) s/Int
    (s/optional-key :availability-zones) az-schema})
 
+(defn validate-listeners [listeners]
+  (when-not (= (count (distinct (mapv :load-balancer-port listeners)))
+              (count listeners))
+    (throw (Exception. "Listeners cannot share the Load Balancer port"))))
+
 (defmethod defcloud/validate :elb
   [elb]
-  (s/validate elb-schema elb))
+  (s/validate elb-schema elb)
+  (validate-listeners (:listeners elb)))
 
 (defn schema->amazonica
   "Converts from the API schema to the Amazonica names."
