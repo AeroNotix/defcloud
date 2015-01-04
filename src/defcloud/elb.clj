@@ -54,16 +54,23 @@
       (catch LoadBalancerNotFoundException e
         false))))
 
-(defn update-elb-settings [elb existing]
-  (let [elb-name    (:name elb)
+(defn update-elb-timeout-settings [elb existing]
+  (let [path-to-timeout [:load-balancer-attributes
+                         :connection-settings
+                         :idle-timeout]
         new-timeout (:idle-timeout elb)
-        old-timeout (get-in existing [:connection-settings :idle-timeout])]
-    (when-not (= new-timeout old-timeout)
-      (elb/modify-load-balancer-attributes
-        {:load-balancer-name elb-name
-         :load-balancer-attributes
-         {:connection-settings
-          {:idle-timeout new-timeout}}}))))
+        old-timeout (get-in existing path-to-timeout)]
+    (if-not (= new-timeout old-timeout)
+      (assoc-in existing path-to-timeout new-timeout)
+      existing)))
+
+(defn update-elb-settings [new-elb existing-elb]
+  (let [elb-name    (:name new-elb)
+        base-attributes {:load-balancer-attributes existing-elb
+                         :load-balancer-name elb-name}]
+    (elb/modify-load-balancer-attributes
+      (->> base-attributes
+        (update-elb-timeout-settings new-elb)))))
 
 (defn create-load-balancer [elb]
   (elb/create-load-balancer elb)
