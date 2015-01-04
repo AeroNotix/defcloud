@@ -6,7 +6,7 @@
 (def ^:dynamic *default-availability-zones* ["us-east-1a"])
 
 (def listener-schema
-  {:protocol (s/enum "tcp" "udp")
+  {:protocol (s/enum "tcp" "udp" "http")
    :load-balancer-port s/Int
    :instance-port s/Int})
 
