@@ -55,8 +55,15 @@
         false))))
 
 (defn update-elb-settings [elb existing]
-  ;; TODO
-  [elb existing])
+  (let [elb-name    (:name elb)
+        new-timeout (:idle-timeout elb)
+        old-timeout (get-in existing [:connection-settings :idle-timeout])]
+    (when-not (= new-timeout old-timeout)
+      (elb/modify-load-balancer-attributes
+        {:load-balancer-name elb-name
+         :load-balancer-attributes
+         {:connection-settings
+          {:idle-timeout new-timeout}}}))))
 
 (defn create-load-balancer [elb]
   (elb/create-load-balancer elb)
