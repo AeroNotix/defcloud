@@ -21,7 +21,8 @@ A Clojure DSL for describing EC2 infrastructure
     :idle-timeout 50
     :listeners
     [listener-5555
-    (assoc listener-5555 :protocol "http")]))
+    (assoc listener-5555 :protocol "http"
+                         :load-balancer-port 2222)]))
 
 (create-all-in-aws!)
 ```
