@@ -67,15 +67,12 @@
 
 (defn create-load-balancer [elb]
   (elb/create-load-balancer elb)
-  (when (and (:idle-timeout elb)
-          (not= (:idle-timeout elb)
-            default-idle-timeout))
-    (loop [existing? (exists? elb)]
-      (if-not existing?
-        (do
-          (Thread/sleep 3000)
-          (recur (exists? elb)))
-        (update-elb-settings elb existing?)))))
+  (loop [existing? (exists? elb)]
+    (if-not existing?
+      (do
+        (Thread/sleep 3000)
+        (recur (exists? elb)))
+      (update-elb-settings elb existing?))))
 
 (defmethod defcloud/create-in-aws! :elb
   [elb]
