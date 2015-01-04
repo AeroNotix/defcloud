@@ -13,7 +13,7 @@
 (def az-schema [s/Str])
 
 (def elb-schema
-  {:name s/Keyword
+  {:name s/Str
    :listeners [listener-schema]
    :kind (s/enum :elb)
    (s/optional-key :availability-zones) az-schema})

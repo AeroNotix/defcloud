@@ -13,8 +13,7 @@
     `(do
        (let [vname# (-> ~name
                       quote
-                      str
-                      keyword)
+                      str)
              opt-map# (-> ~options
                         (conj [:kind ~thing])
                         (conj [:name vname#]))
