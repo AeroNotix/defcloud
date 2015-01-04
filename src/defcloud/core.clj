@@ -23,7 +23,9 @@
          (mapv
            #(swap! aws-dependencies
               dep/depend vname# (:name %))
-           (:deps opt-map#))
+           (if (seq (:deps opt-map#))
+             (:deps opt-map#)
+             [{:name :base}]))
          (swap! aws-registry
            assoc vname# opt-map#)
          rvar#))))
