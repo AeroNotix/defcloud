@@ -1,6 +1,8 @@
 (ns defcloud.core
-  (:require [com.stuartsierra.dependency :as dep]))
+  (:require [com.stuartsierra.dependency :as dep]
+            [amazonica.core :as ec2]))
 
+(ec2/set-root-unwrapping! true)
 
 (def aws-registry (atom {}))
 (def aws-dependencies (atom (dep/graph)))
