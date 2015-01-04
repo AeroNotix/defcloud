@@ -61,7 +61,10 @@
         new-timeout (:idle-timeout elb)
         old-timeout (get-in existing path-to-timeout)]
     (if-not (= new-timeout old-timeout)
-      (assoc-in existing path-to-timeout new-timeout)
+      (do
+        (println (format "Updating %s's idle-timeout from %d to %d"
+                   (:name elb) old-timeout new-timeout))
+        (assoc-in existing path-to-timeout new-timeout))
       existing)))
 
 (defn update-elb-settings [new-elb existing-elb]
@@ -73,6 +76,7 @@
         (update-elb-timeout-settings new-elb)))))
 
 (defn create-load-balancer [elb]
+  (println "Creating new ELB:" (:name elb))
   (elb/create-load-balancer elb)
   (loop [existing? (exists? elb)]
     (if-not existing?
